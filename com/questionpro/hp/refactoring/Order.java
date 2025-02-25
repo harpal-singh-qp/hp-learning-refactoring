@@ -10,12 +10,14 @@ import java.util.List;
 public class Order {
     private final Customer customer;
     private final List<OrderItem> items;
-    private final PriceCalculator priceCalculator;
+    private final TotalCalculator totalCalculator;
+    private final DiscountApplier discountApplier;
 
     public Order(Customer customer) {
         this.customer = customer;
         this.items = new ArrayList<>();
-        this.priceCalculator = new PriceCalculator();
+        this.totalCalculator = new PriceCalculator();
+        this.discountApplier = new PriceCalculator();
     }
 
     public void addItem(String item, double price) {
@@ -23,12 +25,21 @@ public class Order {
     }
 
     public void printOrder() {
-        double totalPrice = priceCalculator.calculateTotal(items);
-        double discountedPrice = priceCalculator.applyDiscount(totalPrice, customer.getDiscount());
+        double totalPrice = calculateTotal();
+        double discountedPrice = discountApplier.applyDiscount(totalPrice, customer.getDiscount());
+
         System.out.println("Customer: " + customer.name());
         System.out.println("Items: " + items);
         System.out.println("Total Price: " + totalPrice);
         System.out.println("Discounted Price: " + discountedPrice);
+    }
+
+    public double calculateTotal() {
+        return totalCalculator.calculateTotal(items);
+    }
+
+    public double totalDiscount() {
+        return discountApplier.applyDiscount(calculateTotal(), customer.getDiscount());
     }
 
     public Customer getCustomer() {

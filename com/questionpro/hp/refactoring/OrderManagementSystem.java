@@ -19,12 +19,8 @@ public class OrderManagementSystem {
     public static void generateInvoice(Order order) {
         System.out.println("Generating Invoice...");
         System.out.println("Customer: " + order.getCustomer().name());
-        double total = order.getItems().stream()
-                           .mapToDouble(OrderItem::price)
-                           .sum();
-        double discountedTotal = total - (total * order.getCustomer().getDiscount());
-        System.out.println("Total: $" + total);
-        System.out.println("Discounted Total: $" + discountedTotal);
+        System.out.println("Total: $" + order.totalDiscount());
+        System.out.println("Discounted Total: $" + order.totalDiscount());
         System.out.println("Items: " + order.getItems());
         System.out.println("Thank you for shopping with us!");
     }
