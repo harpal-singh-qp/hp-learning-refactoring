@@ -16,8 +16,10 @@ public class Order {
     public Order(Customer customer) {
         this.customer = customer;
         this.items = new ArrayList<>();
-        this.totalCalculator = new PriceCalculator();
-        this.discountApplier = new PriceCalculator();
+        this.totalCalculator = items -> items.stream()
+                                             .mapToDouble(OrderItem::price)
+                                             .sum();
+        this.discountApplier = (totalPrice, discount) -> totalPrice - (totalPrice * discount);
     }
 
     public void addItem(String item, double price) {
@@ -25,25 +27,24 @@ public class Order {
     }
 
     public void printOrder() {
-        double totalPrice = calculateTotal();
-        double discountedPrice = discountApplier.applyDiscount(totalPrice, customer.getDiscount());
-
-        System.out.println("Customer: " + customer.name());
+        double totalPrice = getTotalPrice();
+        double discountedPrice = discountApplier.applyDiscount(totalPrice, customer.getDiscountRate());
+        System.out.println("Customer: " + customer.getName());
         System.out.println("Items: " + items);
         System.out.println("Total Price: " + totalPrice);
         System.out.println("Discounted Price: " + discountedPrice);
     }
 
-    public double calculateTotal() {
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public double getTotalPrice() {
         return totalCalculator.calculateTotal(items);
     }
 
-    public double totalDiscount() {
-        return discountApplier.applyDiscount(calculateTotal(), customer.getDiscount());
-    }
-
-    public Customer getCustomer() {
-        return customer;
+    public double getTotalDiscount(){
+        return discountApplier.applyDiscount(getTotalPrice(), customer.getDiscountRate());
     }
 
     public List<OrderItem> getItems() {
